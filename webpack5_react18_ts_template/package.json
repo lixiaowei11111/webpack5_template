@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --progress --config ./config/webpack.config.dev.js",
-    "build": "webpack --mode=production --config ./config/webpack.config.prod.js"
+    "start": "cross-env NODE_ENV=development webpack serve --progress --config ./build/webpack.config.dev.js",
+    "build": "cross-env NODE_ENV=development webpack --mode=development --config ./build/webpack.config.prod.js",
+    "build:prod": "cross-env NODE_ENV=production webpack --mode=production --config ./build/webpack.config.prod.js"
   },
   "keywords": [],
   "author": "",
@@ -18,12 +19,16 @@
     "@babel/preset-typescript": "^7.21.0",
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/react-redux": "^7.1.25",
     "@types/react-router-dom": "^5.3.3",
+    "antd": "^5.2.2",
     "babel-loader": "^9.1.2",
     "babel-plugin-import": "^1.13.6",
     "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
     "html-webpack-plugin": "^5.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
