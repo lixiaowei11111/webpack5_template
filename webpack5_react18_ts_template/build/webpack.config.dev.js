@@ -1,6 +1,12 @@
 const webpackMerge = require('webpack-merge')
-const baseConfig = require('./webpack.config.base')
 const path = require('path')
+const webpack = require('webpack')
+
+const config = require('dotenv').config({
+  path: path.resolve(__dirname, '../env/.env.' + process.env.NODE_ENV),
+})
+
+const baseConfig = require('./webpack.config.base')
 
 /**
  * @type {import('webpack').WebpackOptionsNormalized}
@@ -39,6 +45,11 @@ const devConfig = {
   watchOptions: {
     ignored: /node_modules/,
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(config), // 如果没有用单双引号分别包一层,则会导致 value做为一个未定义的变量暴露,// 加单双引号,或者使用JSON.strigfy(config)
+    }),
+  ],
 }
 // 本地开发服务的环境配置, 不会对 生成环境生效
 module.exports = webpackMerge.merge(baseConfig, devConfig)

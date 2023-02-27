@@ -3,8 +3,10 @@ const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
+const { log } = require('console')
 /**
  * @type {import('webpack').Configuration}
  */
@@ -14,7 +16,7 @@ function resolve(dir) {
   // .. 相当于 ../上一级 path.join 相当于一个 路径计算器
 }
 const isDev = process.env.NODE_ENV !== 'production'
-console.log(path.resolve(__dirname, '../'), process.env.NODE_ENV, resolve('src'), 'path.resolve')
+console.log(process.env, 'process.env')
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
@@ -39,23 +41,27 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx)$/,
-        loader: 'babel-loader',
-        exclude: [/node_modules/],
-        options: {
-          cacheDirectory: true,
-          cacheCompression: false,
-          presets: [
-            [
-              '@babel/preset-env',
-              {
-                modules: false,
-              },
-            ],
-            '@babel/preset-react',
-          ],
-          plugins: [...(isDev ? [require.resolve('react-refresh/babel')] : [])],
-        },
+        test: /\.(js|mjs|jsx|ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: {
+              cacheDirectory: true,
+              cacheCompression: false,
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    modules: false,
+                  },
+                ],
+                '@babel/preset-react',
+              ],
+              plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
+            },
+          },
+        ],
       },
       { test: /\.(ts|tsx)$/, loader: 'ts-loader', exclude: /node_modules/ },
       {
@@ -99,8 +105,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'css/[name].[hash].css',
     }),
+    isDev && new ReactRefreshWebpackPlugin(),
   ],
-  devtools: 'cheap-module-source-map', //生产环境不会有sourc map文件, 'source-map'值会导致生产环境有source-map文件
+  devtool: 'cheap-module-source-map', //生产环境不会有sourc map文件, 'source-map'值会导致生产环境有source-map文件
   // devtools 不同的值的 查阅
   cache: {
     type: 'filesystem',
