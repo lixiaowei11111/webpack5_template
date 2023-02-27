@@ -7,7 +7,9 @@
 
 // 入口文件 相当于 main函数
 // react18 之后
-import React from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-createRoot(document.getElementById("root")).render(<App />);
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+console.log(process.env, 'process.env') // 通过webpack的DefinePlugin接受替换的全局变量 aaa
+
+createRoot(document.getElementById('root')).render(<App />)
