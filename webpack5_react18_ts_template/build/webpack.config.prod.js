@@ -5,7 +5,7 @@ const baseConfig = require('./webpack.config.base')
  */
 
 const prodConfig = {
-  mode: 'production',
+	mode: process.env.NODE_ENV,
 }
 
 module.exports = webpackMerge.merge(baseConfig, prodConfig)

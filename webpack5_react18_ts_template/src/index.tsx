@@ -13,6 +13,7 @@ import { Provider } from 'react-redux'
 import {
 	BrowserRouter,
 	createBrowserRouter,
+	createHashRouter,
 	RouterProvider,
 	Route,
 	createRoutesFromElements,
@@ -20,6 +21,7 @@ import {
 import ErrorBoundary from '@/components/ErrorBoundary'
 
 import store from '@/redux'
+import routes from './routes'
 import App from './App'
 
 console.log(process.env, 'process.env') // 通过webpack的DefinePlugin接受替换的全局变量
@@ -36,16 +38,8 @@ console.log(process.env, 'process.env') // 通过webpack的DefinePlugin接受替
 // )
 
 // 2. 使用 createBrowserRouter 创建
-const router = createBrowserRouter([
-	{
-		path: '/home',
-		element: <App />,
-		loader: null,
-		action: null,
-		errorElement: <ErrorBoundary />,
-		children: null,
-	},
-])
+// const router = createBrowserRouter(routes)// history模式要对nginx进行单独设置,否则可能会导致404
+const router = createHashRouter(routes)
 // 或者 使用 createRoutesFromElements
 // const router = createBrowserRouter(
 // 	createRoutesFromElements(
@@ -60,6 +54,7 @@ const router = createBrowserRouter([
 // 	),
 // )
 
+// RouterProvider必须配合 data router 来使用
 createRoot(document.getElementById('root')).render(
 	<ErrorBoundary>
 		<Provider store={store}>
