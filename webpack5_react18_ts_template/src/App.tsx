@@ -1,7 +1,7 @@
 // App.tsx
 
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Navigate } from 'react-router-dom'
 
 import { AppContext } from './components/AppContext'
 
