@@ -1,9 +1,12 @@
 // data router nesting
 
 import React from 'react'
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, useLocation } from 'react-router-dom'
 
 const TabsDetail: React.FC = () => {
+	const location = useLocation()
+	console.log(location, 'useLocation')
+
 	return (
 		<>
 			<div>
