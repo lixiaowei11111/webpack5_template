@@ -9,6 +9,8 @@ import List from '@/views/List'
 import TabsDetail from '@/views/TabsDetail'
 import CustomerDetail from '@/views/TabsDetail/CustomerDetail'
 import LeadsDetail from '@/views/TabsDetail/LeadsDetail'
+import FileSystemAccessAPITest from '@/views/FileHandle'
+import TimeCounter from '@/components/TimeCounter'
 // 2. 使用 createBrowserRouter 创建
 const router: RouteObject[] = [
 	{
@@ -29,8 +31,12 @@ const router: RouteObject[] = [
 		element: <Detail />,
 	},
 	{
+		path: '/time',
+		element: <TimeCounter />,
+	},
+	{
 		path: '/object',
-		element: <Navigate to="/object/customer" />, // 前套路由重定向 /object中的子路由
+		element: <Navigate to="/object/customer" />, // 嵌套路由重定向 /object中的子路由
 	},
 	{
 		path: '/object',
@@ -51,6 +57,11 @@ const router: RouteObject[] = [
 			// 	element: <CustomerDetail />,
 			// },
 		],
+	},
+	{
+		path: '/FileSystemAccessAPI',
+		caseSensitive: true,
+		element: <FileSystemAccessAPITest />,
 	},
 	{
 		path: '*',
