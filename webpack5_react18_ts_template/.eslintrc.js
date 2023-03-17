@@ -4,7 +4,7 @@
 
 // 2：开启规则，并将其视为错误（可能导致代码构建失败）
 module.exports = {
-	root: true,
+	root: true, // true 表示该配置文件是根目录下的配置文件。这样，在进行代码检查时，ESLint会使用该配置文件进行检查，而不会继续查找其他目录中的配置文件。
 	parserOptions: {
 		parser: 'babel-eslint',
 		sourceType: 'module',
@@ -14,13 +14,19 @@ module.exports = {
 		node: true,
 		es6: true,
 	},
-	extends: ['eslint:recommended', 'plugin:react/recommended'],
+	extends: [
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended',
+		'plugin:react/recommended',
+	],
 	globals: {
 		BMap: 'readonly',
 		BMAP_STATUS_SUCCESS: 'readonly',
 		fullcalendar: 'readonly',
 		WKConfig: 'readonly',
 	},
+	parser: '@typescript-eslint/parser',
+	plugins: ['@typescript-eslint', 'babel'],
 
 	// add your custom rules here
 	// it is base on https://github.com/vuejs/eslint-config-vue
@@ -178,7 +184,7 @@ module.exports = {
 		'no-unreachable': 2,
 		'no-unsafe-finally': 2,
 		'no-unused-vars': [
-			2,
+			1,
 			{
 				vars: 'all',
 				args: 'none',

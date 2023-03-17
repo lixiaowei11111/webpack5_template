@@ -8,8 +8,8 @@ const TabsDetail: React.FC = () => {
 		<>
 			<div>
 				<div>tabs</div>
-				<NavLink to="leads">Leads</NavLink>
-				<NavLink to="customer">Customer</NavLink>
+				<NavLink to='leads'>Leads</NavLink>
+				<NavLink to='customer'>Customer</NavLink>
 			</div>
 			<Outlet></Outlet>
 		</>

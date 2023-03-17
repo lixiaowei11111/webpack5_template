@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React from 'react'
 import { flushSync } from 'react-dom'
 class TimeCounter extends React.Component<any, any> {
 	constructor(props: any) {

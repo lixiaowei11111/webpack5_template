@@ -3,12 +3,12 @@ interface IState {
 	hasError: boolean
 }
 export default class ErrorBoundary extends Component<any, IState> {
-	constructor(props: any) {
+	static getDerivedStateFromError() {
+		return { hasError: true }
+	}
+	constructor(props: unknown) {
 		super(props)
 		this.state = { hasError: false }
-	}
-	static getDerivedStateFromError(error: Error) {
-		return { hasError: true }
 	}
 	componentDidCatch(error: Error, info: { componentStack: string }) {
 		console.log('错误信息：', error)

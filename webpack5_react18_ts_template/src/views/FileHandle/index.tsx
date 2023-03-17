@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from 'antd'
 
 export default function FileSystemAccessAPITest() {
-	const showOpenFilePicker = async () => {
+	const showOpenFilePicker = async() => {
 		try {
 			const [fileHandle] = await window.showOpenFilePicker()
 			console.log(fileHandle)
