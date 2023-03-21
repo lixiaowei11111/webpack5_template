@@ -1,5 +1,6 @@
 const webpackMerge = require('webpack-merge')
 const path = require('path')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 const baseConfig = require('./webpack.config.base')
 
@@ -49,7 +50,7 @@ const devConfig = {
 	watchOptions: {
 		ignored: /node_modules/,
 	},
-	plugins: [],
+	plugins: [new ReactRefreshWebpackPlugin()],
 	// 只有在开启监听模式时，watchOptions 才有意义
 	// 默认为 false，也就是不开启
 	watch: true,

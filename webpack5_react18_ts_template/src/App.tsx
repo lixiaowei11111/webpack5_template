@@ -5,15 +5,14 @@ import { useParams } from 'react-router-dom'
 
 import { AppContext } from './components/AppContext'
 import '@/styles/theme.scss'
-import index from '@/styles/index.css'
 
 const App = () => {
 	const params = useParams()
 	console.log(params, 'useParams()')
 
 	return (
-		<div className={index.app}>
-			<span>12312312331</span>
+		<div className='app'>
+			<span style={{ color: '#bfa' }}>12312312331</span>
 			<AppContext></AppContext>
 		</div>
 	)

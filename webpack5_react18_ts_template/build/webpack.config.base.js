@@ -3,8 +3,7 @@ const webpack = require('webpack')
 const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin') // 单独打包
 const EslintWebpackPlugin = require('eslint-webpack-plugin') // eslint
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin') // css 压缩
 const TerserPlugin = require('terser-webpack-plugin') // js压缩
@@ -27,10 +26,12 @@ function resolve(dir) {
 	// .. 相当于 ../上一级 path.join 相当于一个 路径计算器
 }
 const isDev = process.env.NODE_ENV !== 'production'
-console.log(process.env, 'process.env')
 
 //
 const plugins = [
+	new webpack.DefinePlugin({
+		'process.env': JSON.stringify(config), // 如果没有用单双引号分别包一层,则会导致 value做为一个未定义的变量暴露,// 加单双引号,或者使用JSON.strigfy(config)
+	}),
 	new HtmlWebpackPlugin({
 		title: '管理后台',
 		inject: true,
@@ -39,21 +40,18 @@ const plugins = [
 	}),
 	new CleanWebpackPlugin(),
 	new MiniCssExtractPlugin({
-		filename: utils.assetsPath('css/[name].[contenthash:8].css'),
-		chunkFilename: utils.assetsPath('css/[name].[contenthash:8].css'),
+		filename: 'static/css/[name].[fullhash:8].css',
+		chunkFilename: 'static/css/[name].[fullhash:8].chunk.css',
 	}),
-	isDev && new ReactRefreshWebpackPlugin(),
 	new GenerateSW({
 		swDest: path.join(__dirname, '../dist/worker/index.js'),
 		maximumFileSizeToCacheInBytes: 999999999, // 设置可缓存的文件大小
 	}),
 	new EslintWebpackPlugin({ extensions: ['js', 'jsx'], exclude: ['node_modules'] }), // 用于检测node环境的lint,不能用于Browser检测
-	new webpack.DefinePlugin({
-		'process.env': JSON.stringify(config), // 如果没有用单双引号分别包一层,则会导致 value做为一个未定义的变量暴露,// 加单双引号,或者使用JSON.strigfy(config)
-	}),
-	new CssMinimizerPlugin(), // 压缩css代码
+	// new CssMinimizerPlugin(), // 压缩css代码
 ]
 if (process.env.npm_config_report === 'true') {
+	console.log(process.env.npm_config_report, 'npm_config_report')
 	plugins.push(new BundleAnalyzerPlugin())
 }
 
@@ -68,7 +66,7 @@ module.exports = {
 	},
 	output: {
 		path: path.resolve(__dirname, '../dist'),
-		filename: 'static/js/[name].[hash].js',
+		filename: 'static/js/[name].[fullhash].js',
 		clean: true, // 自动清空上次打包结果
 		// publicPath:
 		//   process.env.NODE_ENV === 'production'
@@ -105,7 +103,7 @@ module.exports = {
 								],
 								'@babel/preset-react',
 							],
-							plugins: [isDev ? [require.resolve('react-refresh/babel')] : []],
+							plugins: isDev ? [require.resolve('react-refresh/babel')] : [],
 						},
 					},
 				],
@@ -114,15 +112,16 @@ module.exports = {
 			{
 				test: /\.(css|scss)$/,
 				exclude: /\.module\.scss$/,
-				use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'], // scss=>postcss=>css =>style 从尾部开始处理
+				use: [
+					isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+					'css-loader',
+					'postcss-loader',
+					'sass-loader',
+				], // scss=>postcss=>css =>style 从尾部开始处理
 			},
 			{
 				test: /\.(jpe?g|png|gif|svg|woff|woff2|eot|ttf|otf)$/i,
 				type: 'asset/resource',
-			},
-			{
-				test: /\.(css|scss)$/i,
-				use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
 			},
 			{
 				test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -130,7 +129,7 @@ module.exports = {
 				exclude: [resolve('src/icons')],
 				options: {
 					limit: 10000,
-					name: utils.assetsPath('img/[name].[hash:7].[ext]'),
+					name: utils.assetsPath('img/[name].[fullhash:7].[ext]'),
 				},
 			},
 			{
@@ -138,7 +137,7 @@ module.exports = {
 				loader: 'url-loader',
 				options: {
 					limit: 10000,
-					name: utils.assetsPath('media/[name].[hash:7].[ext]'),
+					name: utils.assetsPath('media/[name].[fullhash:7].[ext]'),
 				},
 			},
 			{
@@ -146,7 +145,7 @@ module.exports = {
 				loader: 'url-loader',
 				options: {
 					limit: 10000,
-					name: utils.assetsPath('fonts/[name].[hash:7].[ext]'),
+					name: utils.assetsPath('fonts/[name].[fullhash:7].[ext]'),
 				},
 			},
 			{
@@ -177,7 +176,7 @@ module.exports = {
 		minimize: true,
 	},
 	plugins: plugins,
-	devtool: 'cheap-module-source-map', //生产环境不会有sourc map文件, 'source-map'值会导致生产环境有source-map文件
+	devtool: isDev ? 'source-map' : 'cheap-module-source-map', //生产环境不会有sourc map文件, 'source-map'值会导致生产环境有source-map文件
 	// devtools 不同的值的 查阅
 	cache: {
 		type: 'filesystem',

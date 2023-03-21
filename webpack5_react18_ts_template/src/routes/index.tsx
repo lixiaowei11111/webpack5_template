@@ -2,7 +2,7 @@ import React from 'react'
 import { Navigate, RouteObject } from 'react-router-dom'
 import ErrorBoundary from '@/components/ErrorBoundary'
 
-// import App from '../App'
+import App from '../App'
 import Home from '@/views/Home'
 import Detail from '@/views/Detail'
 import List from '@/views/List'
@@ -18,6 +18,10 @@ const router: RouteObject[] = [
 		path: '/',
 		element: <Navigate to='/home'></Navigate>,
 		errorElement: <ErrorBoundary />,
+	},
+	{
+		path: '/app',
+		element: <App />,
 	},
 	{
 		path: '/home',
