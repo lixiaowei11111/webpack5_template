@@ -69,6 +69,7 @@ const devConfig = {
 	},
 	optimization: {
 		usedExports: true, // development env 下开启 tree shaking的方法, production env default open
+		removeAvailableModules: false,
 	},
 }
 // 本地开发服务的环境配置, 不会对 生成环境生效

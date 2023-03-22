@@ -1,10 +1,23 @@
 //  config/webpack.config.base.js
 const webpack = require('webpack')
 const path = require('path')
+
+// plugins
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin') // 单独打包
+const HtmlWebpackPlugin = require('html-webpack-plugin') //
+/**
+ * html-webpack-plugin 是一个用于生成 HTML 文件的 webpack 插件。它可以将打包后的资源自动插入到生成的 HTML 文件中，
+ * 并且可以根据模板文件生成 HTML 文件。该插件的作用主要有以下几点：
+ * 自动生成 HTML 文件：该插件可以自动创建 HTML 文件，并将打包后的资源自动插入到 HTML 文件中，无需手动创建 HTML 文件。
+ * 自动添加打包后的资源：该插件可以将打包后的 CSS、JS 等资源自动添加到 HTML 文件中，无需手动引入。
+ * 支持多页面应用：该插件可以根据多个入口文件自动生成对应的 HTML 文件，并将打包后的资源自动添加到对应的 HTML 文件中。
+ * 支持模板文件：该插件可以根据模板文件生成 HTML 文件，可以自定义 HTML 文件的结构和内容。
+ */
+const MiniCssExtractPlugin = require('mini-css-extract-plugin') // css单独打包
 const EslintWebpackPlugin = require('eslint-webpack-plugin') // eslint
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin') // typescript 运行时检查
+
+// optimization
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin') // css 压缩
 const TerserPlugin = require('terser-webpack-plugin') // js压缩
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin // webpack 可视化分析工具
@@ -49,6 +62,7 @@ const plugins = [
 	}),
 	new EslintWebpackPlugin({ extensions: ['js', 'jsx'], exclude: ['node_modules'] }), // 用于检测node环境的lint,不能用于Browser检测
 	// new CssMinimizerPlugin(), // 压缩css代码
+	new ForkTsCheckerWebpackPlugin(),
 ]
 if (process.env.npm_config_report === 'true') {
 	console.log(process.env.npm_config_report, 'npm_config_report')
@@ -75,7 +89,7 @@ module.exports = {
 	},
 	resolve: {
 		// resolve选项是Webpack中的一个配置选项，用于设置模块如何被解析。
-		extensions: ['.js', '.jsx', '.ts', '.tsx'],
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 		// 在导入语句没带文件后缀时，Webpack 会自动带上后缀后去尝试访问文件是否存在,导入文件时,省略后缀名。
 		alias: {
 			// 通过别名来把原导入路径映射成一个新的导入路径
@@ -167,13 +181,44 @@ module.exports = {
 			// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
 			// `...`,
 			new CssMinimizerPlugin(), //压缩css代码
-			new TerserPlugin(), // 压缩js代码
+			new TerserPlugin({
+				// https://github.com/webpack-contrib/terser-webpack-plugin#parallel
+				// test: null,
+				// includes: null,
+				// exclude: null,
+				// minify: {},
+				parallel: true, // boolean |number 使用多线程并行来提高构建速度
+				// terserOptions: {},
+				// extractComments: null, // 提取注释
+			}), // 压缩js代码
 		],
-		splitChunks: {
-			// 代码切割
-			chunks: 'all',
-		},
 		minimize: true,
+		runtimeChunk: true,
+		splitChunks: {
+			name: false, // split chunk的名称。提供false将保持块的相同名称，因此它不会不必要地更改名称。这是生产构建的推荐值
+			chunks: 'all',
+			minSize: 20000, // 生成chunk的最小大小 byte
+			maxSize: 100000,
+			cacheGroups: {
+				vendors: {
+					test: module => {
+						return (
+							module.resource &&
+							/\.js$/.test(module.resource) &&
+							module.resource.match('node_modules')
+						)
+					},
+					priority: 10,
+					name: 'vendor',
+					chunks: 'all',
+				},
+				ant: {
+					name: 'chunk-ant-design', // 单独将 elementUI 拆包
+					priority: 20, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+					test: /[\\/]node_modules[\\/]ant-design[\\/]/,
+				},
+			},
+		},
 	},
 	plugins: plugins,
 	devtool: isDev ? 'source-map' : 'cheap-module-source-map', //生产环境不会有sourc map文件, 'source-map'值会导致生产环境有source-map文件

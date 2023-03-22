@@ -10,6 +10,8 @@ const App = () => {
 	const params = useParams()
 	console.log(params, 'useParams()')
 
+	// const ybb: string = 131
+
 	return (
 		<div className='app'>
 			<span style={{ color: '#bfa' }}>12312312331</span>

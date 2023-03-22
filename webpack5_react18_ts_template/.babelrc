@@ -1,5 +1,5 @@
 {
-	"presets": ["@babel/preset-env", "@babel/preset-react"],
+	"presets": ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
 	// presets 属性告诉 Babel 要转换的源码使用了哪些新的语法特性，
 	// 一个 Presets 对一组新语法特性提供支持，多个 Presets 可以叠加。
 	//  Presets 其实是一组 Plugins 的集合，每一个 Plugin 完成一个新语法的转换工作。
